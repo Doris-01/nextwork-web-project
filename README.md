@@ -1,103 +1,122 @@
-# Cloud Web App Deployment Project
+# 🚀 Nextwork DevOps Challenge Project
 
-This project demonstrates how to set up and deploy a simple web application in the cloud using **AWS EC2** and **VS Code** with GitHub integration.
-
----
-
-## 🚀 Project Overview
-
-The goal is to:
-
-- Launch a cloud-based EC2 instance
-- Set up VS Code for remote development
-- Connect and sync code with a GitHub repository
-- Configure and deploy your web app
+This repository showcases a complete DevOps CI/CD pipeline using AWS services. The project walks through the process of building, packaging, and deploying a Maven-based web application using CodeArtifact, CodeBuild, CodeDeploy, and CodePipeline.
 
 ---
 
-## 🛠️ Prerequisites
+## 📌 Project Overview
 
-- An AWS account
-- GitHub account
-- VS Code installed with the **Remote - SSH** extension
-- SSH key pair generated via AWS or locally
+The objective of this project is to deploy a Maven web application using a fully automated DevOps pipeline on AWS.
 
 ---
 
-## 1. Launch an EC2 Instance
+## 🔧 Tools Installed on EC2 Instance
 
-1. Go to the AWS Console.
-2. Launch an Amazon Linux 2 EC2 instance.
-3. Choose instance type (e.g., `t2.micro` under Free Tier).
-4. Add a security group that allows **SSH (port 22)** and **HTTP (port 80)** access.
-5. Download or use an existing key pair (.pem file).
+- **Maven**
+- **Java (Amazon Corretto 8)**
+- **Git**
+- **VS Code (Remote SSH)**
+
+---
+
+## 🔨 Challenge Steps and Implementation
+
+### 1️⃣ Set Up a Web App in the Cloud
+- Launched an EC2 instance on AWS with Java, Maven, and Git installed.
+- Configured VS Code to connect via Remote SSH for local development in the cloud.
+
+### 2️⃣ Create a CodeArtifact Repository
+- Created an AWS CodeArtifact repository to store Maven dependencies.
+- Configured `settings.xml` to authenticate Maven with CodeArtifact.
+
+### 3️⃣ Set Up IAM Access for CodeArtifact
+- Created an IAM policy for CodeArtifact access.
+- Attached the policy to a role assumed by the EC2 instance via its instance profile.
+
+### 4️⃣ Connect CodeArtifact to Maven
+- Ran authentication command using `aws codeartifact login` for Maven.
+- Verified Maven was able to fetch and upload artifacts to CodeArtifact.
+
+### 5️⃣ Store Build Artifacts in S3
+- Launched an S3 bucket to store `.zip` files or `.jar` build outputs from CodeBuild.
+
+### 6️⃣ Launch CloudFormation Stack for Deployment
+- Used AWS CloudFormation to spin up the deployment EC2 instance with the correct IAM role, tags, and instance profile.
+
+### 7️⃣ Set Up CodeDeploy
+- Created a CodeDeploy application and deployment group.
+- Wrote `appspec.yml` and custom lifecycle scripts to manage deployments.
+
+### 8️⃣ Configure CodeDeploy IAM Service Role
+- Created a role for CodeDeploy with policies for EC2 and S3 access.
+
+### ✅ Successfully Deploy the Web App
+- Triggered a manual deployment via CodeDeploy to test infrastructure and deployment lifecycle scripts.
+
+### 9️⃣ Set Up a CodeBuild Project
+- Created a `buildspec.yml` in the repo defining Maven build steps.
+- Configured a CodeBuild project to pull code from GitHub, run Maven build, and upload artifacts to S3.
+
+### 🔑 Update CodeBuild IAM Role
+- Attached policies allowing CodeBuild to:
+  - Access CodeArtifact
+  - Fetch dependencies
+  - Push artifacts to S3
+
+### 🔁 Set Up CodePipeline (CI/CD)
+
+- **Source Stage**: Connected CodePipeline to GitHub using a personal access token.
+- **Build Stage**: Connected to CodeBuild project.
+- **Deploy Stage**: Connected to CodeDeploy deployment group.
+
+### 🔔 Automate Trigger with Webhooks
+- Configured webhook in GitHub to trigger CodePipeline on `push` events.
 
 ---
 
-## 2. Set Up VS Code for Remote Development
+## 🗂️ File Structure
+. ├── appspec.yml ├── buildspec.yml ├── scripts/ │ ├── install_dependencies.sh │ ├── start_server.sh │ └── stop_server.sh ├── src/ │ └── Main.java / HTML / App Files └── README.md
 
-1. Open VS Code.
-2. Install the **Remote - SSH** extension from the Extensions tab.
-3. Press `F1` → search for and select `Remote-SSH: Connect to Host`.
-4. Use the SSH command:
-   ```bash
-   ssh -i /path/to/your-key.pem ec2-user@your-ec2-public-ip
-
-Once connected, open the folder where you'll place your web app.
-
-## 3. Set Up Git on the EC2 Instance
-SSH into your EC2 instance.
-
-Install Git if it's not already installed:
-
-sudo yum update -y
-sudo yum install git -y
-
-## 4. Connect GitHub to Your EC2 Web App
-Step 1: Create a GitHub Repo
-Create a new repository on GitHub (e.g., nextwork-web-project)
-
-Step 2: Initialize Git Locally
-
-git init
-
-Step 3: Set Up Git Identity
-
-git config --global user.name "Your Name"
-git config --global user.email "your@email.com"
-
-Step 4: Add Remote Repo
-
-git remote add origin https://github.com/your-username/nextwork-web-project.git
-Replace your-username and repo name accordingly.
-
-## 5. Authenticate Using GitHub Token
-On GitHub, go to Settings > Developer Settings > Personal Access Tokens.
-
-Generate a new token (classic), with repo permissions.
-
-When pushing your code:
-
-Use your GitHub username.
-
-Use the token as your password when prompted.
-
-## 6. Push Your Web App to GitHub
-Add your project files:
-
-
-git add .
-Commit changes:
-
-
-git commit -m "Initial commit"
-Push to GitHub:
-
-git push -u origin master
-
-✅ Done!
-Your cloud-hosted development environment is now ready, and your code is version-controlled with GitHub.
-You can now continue developing and deploying your web application from the cloud!
 
 ---
+
+## 🧪 Final Test
+- Committed and pushed code to GitHub.
+- Verified CodePipeline:
+  - Pulled source
+  - Built with Maven via CodeBuild
+  - Stored artifact in S3
+  - Deployed to EC2 using CodeDeploy
+- Rollback policies tested for disaster recovery.
+
+---
+
+## 🧰 AWS Services Used
+
+- **Amazon EC2**
+- **Amazon S3**
+- **AWS CodeArtifact**
+- **AWS CodeBuild**
+- **AWS CodeDeploy**
+- **AWS CodePipeline**
+- **AWS IAM**
+- **AWS CloudFormation**
+
+---
+
+## 🎯 Outcomes
+
+- Full DevOps pipeline successfully deployed.
+- Web application is now version-controlled, artifact-managed, and auto-deployed on every commit.
+
+---
+
+## 👩🏽‍💻 Author
+
+**Emeh Tochi Doris**  
+CloudOps | DevOps |   
+GitHub: [@Doris-01](https://github.com/Doris-01)
+
+---
+
 
